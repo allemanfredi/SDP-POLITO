@@ -397,7 +397,7 @@ DWORD WINAPI ThAWork(LPVOID param) {
 
 			data->hashFullQueueA[selectedQueue]++;
 
-		//_tprintf(_T("Thread A-%d has read %s which will be inserted in queueA-%d\n") , id , record.sequenceOfCharacter , selectedQueue);
+		_tprintf(_T("Thread A-%d has read %s which will be inserted in queueA-%d\n") , id , record.sequenceOfCharacter , selectedQueue);
 
 		LeaveCriticalSection(data->csAB);
 		ReleaseSemaphore(*data->fillAB , 1, NULL);
