@@ -102,7 +102,7 @@ VOID init(LIST* ptr, INT size);
 DWORD insert(LIST * ptr, RECORD value);
 VOID visit(LIST * ptr);
 RECORD *remove(LIST * ptr);
-BOOL IsDone(PDWORD ptr, INT size);
+
 
 //thread funciton protoype
 DWORD WINAPI ThAWork(LPVOID param);
@@ -560,13 +560,6 @@ DWORD WINAPI ThCWork(LPVOID param) {
 		LeaveCriticalSection(data->csBC);
 		ReleaseSemaphore(*data->emptyBC, 1, NULL);	
 
-		// if all queue are "empty" and threadA is done means that i can terminate the thread
-		/*if ((IsDone(data->hashFullQueueA, data->numFile) == TRUE) && (IsDone(data->hashFullQueueB, data->numFile) == TRUE) && isDoneA == TRUE) {
-			return -4;
-		}*/
-
-		/*if ((IsDone(data->hashFullQueueB, data->numFile) == TRUE) && isDoneA == TRUE)
-			terminate = TRUE;*/
 
 	}
 
