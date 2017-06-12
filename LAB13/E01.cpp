@@ -41,9 +41,9 @@ typedef struct _THREAD_A_DATA {
 	PHANDLE				fillAB;
 	PHANDLE				emptyAB;
 
-	PCRITICAL_SECTION	csAB;
+	PCRITICAL_SECTION		csAB;
 
-	PCRITICAL_SECTION	csFileOpening;   //critical section used to file opening
+	PCRITICAL_SECTION		csFileOpening;   //critical section used to file opening
 
 
 }THREAD_A_DATA;
@@ -57,12 +57,12 @@ typedef struct _THREAD_B_DATA {
 	//THREAD B ----- THREAD A
 	PHANDLE				fillAB;
 	PHANDLE				emptyAB;
-	PCRITICAL_SECTION	csAB;
+	PCRITICAL_SECTION		csAB;
 
 	//THREAD B ----- THRAD C
 	PHANDLE				fillBC;
 	PHANDLE				emptyBC;
-	PCRITICAL_SECTION	csBC;
+	PCRITICAL_SECTION		csBC;
 
 	
 
@@ -81,7 +81,7 @@ typedef struct _THREAD_C_DATA {
 	//THREAD C ----- THREAD B
 	PHANDLE				fillBC;
 	PHANDLE				emptyBC;
-	PCRITICAL_SECTION	csBC;
+	PCRITICAL_SECTION		csBC;
 
 
 }THREAD_C_DATA;
@@ -113,18 +113,18 @@ INT _tmain(INT argc, LPTSTR argv[])
 
 	LIST				*queueA, *queueB;
 
-	THREAD_A_DATA		*dataThA;
-	THREAD_B_DATA		*dataThB;
-	THREAD_C_DATA		*dataThC;
+	THREAD_A_DATA			*dataThA;
+	THREAD_B_DATA			*dataThB;
+	THREAD_C_DATA			*dataThC;
 
 	LPTSTR				nameOfInputFile[] = { L"data1.bin" , L"data2.bin" , L"data3.bin" , L"data4.bin", L"data5.bin" };
 	LPTSTR				nameOfOutputFile[] = { L"output1.bin" , L"output2.bin" , L"output3.bin" , L"output4.bin", L"output5.bin" };
 
 	HANDLE				fillAB,fillBC;
 	HANDLE				emptyAB, emptyBC;
-	CRITICAL_SECTION	csAB, csBC;
+	CRITICAL_SECTION		csAB, csBC;
 
-	CRITICAL_SECTION	csFileOpening;
+	CRITICAL_SECTION		csFileOpening;
 
 	PDWORD				hashOpenedFileA, hashOpenedFileC;
 
