@@ -96,7 +96,6 @@ VOID init(LIST* ptr, INT size);
 DWORD insert(LIST * ptr, RECORD value);
 VOID visit(LIST * ptr);
 RECORD *remove(LIST * ptr);
-BOOL IsDone(PDWORD ptr, INT size);
 
 //thread funciton protoype
 DWORD WINAPI ThAWork(LPVOID param);
