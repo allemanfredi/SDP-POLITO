@@ -45,7 +45,6 @@ typedef struct _THREAD_A_DATA {
 
 	PCRITICAL_SECTION	csFileOpening;   //critical section used to file opening
 
-	PDWORD				hashFullQueueA;
 
 }THREAD_A_DATA;
 
@@ -65,8 +64,6 @@ typedef struct _THREAD_B_DATA {
 	PHANDLE				emptyBC;
 	PCRITICAL_SECTION	csBC;
 
-	PDWORD				hashFullQueueA;
-	PDWORD				hashFullQueueB;
 	
 
 }THREAD_B_DATA;
@@ -86,14 +83,11 @@ typedef struct _THREAD_C_DATA {
 	PHANDLE				emptyBC;
 	PCRITICAL_SECTION	csBC;
 
-	PDWORD				hashFullQueueB;
-	PDWORD				hashFullQueueA;
 
 }THREAD_C_DATA;
 
-
-BOOL	isDoneA = FALSE;
-BOOL	isDoneB = FALSE;
+BOOL	isDoneA = false;
+BOOL	isDoneB = false;
 
 DWORD	terminateA, terminateB;
 
@@ -102,7 +96,7 @@ VOID init(LIST* ptr, INT size);
 DWORD insert(LIST * ptr, RECORD value);
 VOID visit(LIST * ptr);
 RECORD *remove(LIST * ptr);
-
+BOOL IsDone(PDWORD ptr, INT size);
 
 //thread funciton protoype
 DWORD WINAPI ThAWork(LPVOID param);
@@ -124,8 +118,8 @@ INT _tmain(INT argc, LPTSTR argv[])
 	THREAD_B_DATA		*dataThB;
 	THREAD_C_DATA		*dataThC;
 
-	LPTSTR				nameOfInputFile[] = { L"data1.bin" , L"data2.bin" , L"data3.bin" , L"data4.bin" };
-	LPTSTR				nameOfOutputFile[] = { L"output1.bin" , L"output2.bin" , L"output3.bin" , L"output4.bin" };
+	LPTSTR				nameOfInputFile[] = { L"data1.bin" , L"data2.bin" , L"data3.bin" , L"data4.bin", L"data5.bin" };
+	LPTSTR				nameOfOutputFile[] = { L"output1.bin" , L"output2.bin" , L"output3.bin" , L"output4.bin", L"output5.bin" };
 
 	HANDLE				fillAB,fillBC;
 	HANDLE				emptyAB, emptyBC;
@@ -133,7 +127,7 @@ INT _tmain(INT argc, LPTSTR argv[])
 
 	CRITICAL_SECTION	csFileOpening;
 
-	PDWORD				hashOpenedFileA, hashOpenedFileC, hashFullQueueA, hashFullQueueB;
+	PDWORD				hashOpenedFileA, hashOpenedFileC;
 
 	
 	srand((unsigned)time(NULL));
@@ -182,14 +176,19 @@ INT _tmain(INT argc, LPTSTR argv[])
 
 
 	//semaphore and critical section initialization
+
+
+
 	fillAB = CreateSemaphore(NULL, 0, numThread, NULL);
-	emptyAB = CreateSemaphore(NULL, numThread, numThread, NULL);
+	emptyAB = CreateSemaphore(NULL, 1, numThread, NULL);
 
 	fillBC = CreateSemaphore(NULL, 0, numThread, NULL);
 	emptyBC = CreateSemaphore(NULL, 1, numThread, NULL);
 
 	InitializeCriticalSection(&csAB);
 	InitializeCriticalSection(&csBC);
+
+
 
 
 	//critical section for file opening
@@ -218,14 +217,7 @@ INT _tmain(INT argc, LPTSTR argv[])
 
 
 
-	//hash queue allocation
-	hashFullQueueA = (PDWORD)malloc(numThread *sizeof(DWORD));
-	hashFullQueueB = (PDWORD)malloc(numThread * sizeof(DWORD));
 
-	for (int i = 0; i < numThread; i++) {
-		hashFullQueueA[i] = 0;
-		hashFullQueueB[i] = 0;
-	}
 
 	
 	//thread A creation
@@ -249,7 +241,6 @@ INT _tmain(INT argc, LPTSTR argv[])
 
 		dataThA[i].csFileOpening = &csFileOpening;
 
-		dataThA[i].hashFullQueueA = hashFullQueueA;
 
 		thAHandle[i] = CreateThread(NULL, 0, ThAWork, &dataThA[i], CREATE_NOT_SUSPEND, &thAId[i]);
 	}
@@ -273,8 +264,6 @@ INT _tmain(INT argc, LPTSTR argv[])
 		dataThB[i].fillBC = &fillBC;
 		dataThB[i].csBC = &csBC;
 
-		dataThB[i].hashFullQueueA = hashFullQueueA;
-		dataThB[i].hashFullQueueB = hashFullQueueB;
 
 		thBHandle[i] = CreateThread(NULL, 0, ThBWork, &dataThB[i], CREATE_NOT_SUSPEND, &thBId[i]);
 	}
@@ -298,8 +287,6 @@ INT _tmain(INT argc, LPTSTR argv[])
 		//array to keep trace of file just opened 
 		dataThC[i].hashOpenedFileC = hashOpenedFileC;
 
-		dataThC[i].hashFullQueueB = hashFullQueueB;
-		dataThC[i].hashFullQueueA = hashFullQueueA;
 
 
 		thCHandle[i] = CreateThread(NULL, 0, ThCWork, &dataThC[i], CREATE_NOT_SUSPEND, &thCId[i]);
@@ -308,23 +295,24 @@ INT _tmain(INT argc, LPTSTR argv[])
 
 	WaitForMultipleObjects(numThread, thAHandle, TRUE, INFINITE);
 
-
-	//put "stop" into the queue in order to stop 
-	RECORD			app;
-	app.N = 0;
-	_tcscpy(app.sequenceOfCharacter, _T("stop"));
-	//for (size_t i = 0; i < numThread; i++)
-		for ( size_t j = 0; j < numThread; j++)
-			insert(&queueA[j], app);
 	
+	isDoneA = true;
 
-	ReleaseSemaphore(fillAB, numThread, NULL);
+	if (ReleaseSemaphore(fillAB, numThread, NULL) == 0) //to wake up all thread blocked on waitforsingleobejct
+		printf("Error: %x\n", GetLastError());
 	
-	WaitForMultipleObjects(numThread, thCHandle, TRUE, INFINITE);
-
-	ReleaseSemaphore(fillBC, numThread, NULL);
 
 	WaitForMultipleObjects(numThread, thBHandle, TRUE, INFINITE);
+	
+
+	isDoneB = true;
+	if (ReleaseSemaphore(fillBC, numThread, NULL) == 0)  //to wake up all thread blocked on waitforsingleobejct
+		printf("Error: %x\n", GetLastError());
+	
+	
+	WaitForMultipleObjects(numThread, thCHandle, TRUE, INFINITE);
+	
+
 	
 
 	system("PAUSE");
@@ -343,6 +331,7 @@ DWORD WINAPI ThAWork(LPVOID param) {
 	BOOL					canOpen = FALSE;
 	DWORD					id;
 	RECORD					recordApp;
+	DWORD					queue;
 
 	data = (THREAD_A_DATA *)param;
 
@@ -374,37 +363,39 @@ DWORD WINAPI ThAWork(LPVOID param) {
 	//start
 	while (ReadFile(file, &record, sizeof(RECORD), &nIn, NULL) > 0 && nIn > 0) {
 		
-		WaitForSingleObject(*data->emptyAB, INFINITE);
+		if (WaitForSingleObject(*data->emptyAB, INFINITE) != WAIT_OBJECT_0)
+			return -1;
+
 		EnterCriticalSection(data->csAB);
 
-			timeSleep = (rand() % 10) + 1;
-			Sleep(timeSleep *100);
+
+		timeSleep = (rand() % 10) + 1;
+		Sleep(timeSleep *100);
 			
-			selectedQueue = (rand() % data->numFile);
+		selectedQueue = (rand() % data->numFile);
 
-			//arise non alphabetic character
-			int j = 0;
-			for ( int i = 0; i < record.N; i++)
-				if ((record.sequenceOfCharacter[i] >= 'a' && record.sequenceOfCharacter[i] <= 'z') || (record.sequenceOfCharacter[i] >= 'A' && record.sequenceOfCharacter[i] <= 'Z')) {
-					recordApp.sequenceOfCharacter[j] = record.sequenceOfCharacter[i];
-					j++;
-				}
-			recordApp.sequenceOfCharacter[j] = 0;
-			recordApp.N = j;
+		//arise non alphabetic character
+		int j = 0;
+		for ( int i = 0; i < record.N; i++)
+			if ((record.sequenceOfCharacter[i] >= 'a' && record.sequenceOfCharacter[i] <= 'z') || (record.sequenceOfCharacter[i] >= 'A' && record.sequenceOfCharacter[i] <= 'Z')) {
+				recordApp.sequenceOfCharacter[j] = record.sequenceOfCharacter[i];
+				j++;
+			}
+		recordApp.sequenceOfCharacter[j] = 0; //TERMINATOR charatcetr
+		recordApp.N = j;
 
-			//put in the queue the record just generate
-			insert(&data->allQueueA[selectedQueue], recordApp);
+		//put in the queue the record just generate
+		insert(&data->allQueueA[selectedQueue], recordApp);
 
-			data->hashFullQueueA[selectedQueue]++;
 
 		_tprintf(_T("Thread A-%d has read %s which will be inserted in queueA-%d\n") , id , record.sequenceOfCharacter , selectedQueue);
 
 		LeaveCriticalSection(data->csAB);
-		ReleaseSemaphore(*data->fillAB , 1, NULL);
+		if (ReleaseSemaphore(*data->fillAB, 1, NULL) == 0)
+			return -2;
 
 	}
 	
-
 	
 	CloseHandle(file);
 
@@ -427,72 +418,69 @@ DWORD WINAPI ThBWork(LPVOID param) {
 
 	srand((unsigned)time(NULL));
 	
-	while (!terminate) {
+	while (true) {
+		
+		
+		if (WaitForSingleObject(*data->fillAB, INFINITE) != WAIT_OBJECT_0)
+			return -3;
 		
 
-		// A TO B
-		WaitForSingleObject(*data->fillAB, INFINITE);
+		//stop condition
+		if (isDoneA) 
+			return 0;	
+
+
 		EnterCriticalSection(data->csAB);
 
-			// in order to do not read from an empty queue
+
+		// in order to do not read from an empty queue
+		while (extractedValue == NULL) {
+
+			selectedQueue = (rand() % data->numFile);
+			extractedValue = remove(&data->allQueueA[selectedQueue]);
+
+		}
 
 
-			while (extractedValue == NULL) {
-
-				selectedQueue = (rand() % data->numFile);
-				extractedValue = remove(&data->allQueueA[selectedQueue]);
-
-			}
-
-			if (extractedValue->N == 0 && _tcscmp(extractedValue->sequenceOfCharacter, _T("stop")) == 0)
-				terminate = true;
-
-			data->hashFullQueueA[selectedQueue]--;
-
-			_tprintf(_T("Thread B-%d has read from queueA-%d the value : %s\n"), id, selectedQueue, extractedValue->sequenceOfCharacter, extractedValue->N);
+		_tprintf(_T("Thread B-%d has read from queueA-%d the value : %s\n"), id, selectedQueue, extractedValue->sequenceOfCharacter, extractedValue->N);
 
 
-			//loweCase letter to upperCase letter
-			for (int i = 0; i < extractedValue->N; i++)
-				if (extractedValue->sequenceOfCharacter[i] >= 'a' &&  extractedValue->sequenceOfCharacter[i] <= 'z')
-					extractedValue->sequenceOfCharacter[i] -= 32;  //32 beacause from 'a' to 'A' there are 32 character
-					
-				
+		//loweCase letter to upperCase letter
+		for (int i = 0; i < extractedValue->N; i++)
+			if (extractedValue->sequenceOfCharacter[i] >= 'a' &&  extractedValue->sequenceOfCharacter[i] <= 'z')
+				extractedValue->sequenceOfCharacter[i] -= 32;  //32 beacause from 'a' to 'A' there are 32 character
+
+	
 
 		LeaveCriticalSection(data->csAB);
-		ReleaseSemaphore(*data->emptyAB, 1, NULL);
+		if (ReleaseSemaphore(*data->emptyAB, 1, NULL) == 0) {
+
+			fprintf(stderr, "Error: %d", GetLastError());
+			return -4;
+		}
+			
 	
 		
 		// B TO C
-		WaitForSingleObject(*data->emptyBC, INFINITE);
+		if (WaitForSingleObject(*data->emptyBC, INFINITE) != WAIT_OBJECT_0)
+			return -5;
+
 		EnterCriticalSection(data->csBC);
 
-		if (terminate == FALSE) {
 
-			selectedQueue = (rand() % data->numFile);
+		selectedQueue = (rand() % data->numFile);
 
-			//put into the queue B the value generate by changing the lowecase letter in uppercase letter
-			insert(&data->allQueueB[selectedQueue], *extractedValue);
-
-			data->hashFullQueueB[selectedQueue]++;
+		//put into the queue B the value generate by changing the lowecase letter in uppercase letter
+		insert(&data->allQueueB[selectedQueue], *extractedValue);
 
 
-			//set extractedValue = NULL in order to do not exceed the next loop
-			extractedValue = NULL;
+		//set extractedValue = NULL in order to do not exceed the next loop
+		extractedValue = NULL;
 
-		}
-		else { //put "stop" in all queues in ordes to stop the C thread
-			
-			RECORD			app;
-			app.N = 0;
-			_tcscpy(app.sequenceOfCharacter, _T("stop"));
-			for (size_t i = 0; i < data->numFile; i++)
-				insert(&data->allQueueB[i], app);
-
-		}
 		
 		LeaveCriticalSection(data->csBC);
-		ReleaseSemaphore(*data->fillBC, 1, NULL);
+		if (ReleaseSemaphore(*data->fillBC, 1, NULL) == 0)
+			return -6;
 		
 
 	}
@@ -513,54 +501,56 @@ DWORD WINAPI ThCWork(LPVOID param) {
 
 	id = GetCurrentThreadId();
 
-	while (!terminate) {
+	while (true) {
 		
+
+		if (WaitForSingleObject(*data->fillBC, INFINITE) != WAIT_OBJECT_0)
+			return -7;
 		
-	
-		WaitForSingleObject(*data->fillBC, INFINITE);
+		//stop conditon
+		if (isDoneB)
+			return 0;
+
 		EnterCriticalSection(data->csBC);
 		
 
-			// in order to do not read from an empty queue
-			while (extractedValue == NULL) {
+		// in order to do not read from an empty queue
+		while (extractedValue == NULL) {
 
-				selectedQueue = (rand() % data->numFile);
-				extractedValue = remove(&data->allQueueB[selectedQueue]);
+			selectedQueue = (rand() % data->numFile);
+			extractedValue = remove(&data->allQueueB[selectedQueue]);
 	
-			}
-			
-			data->hashFullQueueB[selectedQueue]--;
-
-			if (extractedValue->N == 0 && _tcscmp(extractedValue->sequenceOfCharacter, _T("stop")) == 0)
-				terminate = true;
-
-			_tprintf(_T("Thread C-%d has read from queueB-%d the value : %s\n"), id, selectedQueue, extractedValue->sequenceOfCharacter, extractedValue->N);
-
-			if (terminate == FALSE) {
-
-				//write the record into the file
-				index = (rand() % data->numFile);
-				if (data->hashOpenedFileC[index] == 0) {
-
-					file = CreateFile(data->listOfFileB[index], FILE_APPEND_DATA, FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-					if (file == INVALID_HANDLE_VALUE) {
-						fprintf(stderr, "Cannot open input file. Error: %x\n", GetLastError());
-						return -2;
-					}
-
-				}
-
-				WriteFile(file, extractedValue, sizeof(RECORD), &nOut, NULL);
-				CloseHandle(file);
-
-				extractedValue = NULL;
-			}
+		}
 			
 
+		_tprintf(_T("Thread C-%d has read from queueB-%d the value : %s\n"), id, selectedQueue, extractedValue->sequenceOfCharacter, extractedValue->N);
+
+		
+
+		//write the record into the file
+		index = (rand() % data->numFile);
+		if (data->hashOpenedFileC[index] == 0) {
+
+			file = CreateFile(data->listOfFileB[index], FILE_APPEND_DATA, FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+			if (file == INVALID_HANDLE_VALUE) {
+				fprintf(stderr, "Cannot open input file. Error: %x\n", GetLastError());
+				return -2;
+			}
+
+		}
+
+		WriteFile(file, extractedValue, sizeof(RECORD), &nOut, NULL);
+		CloseHandle(file);
+
+		
+		extractedValue = NULL;
+		
+			
 		LeaveCriticalSection(data->csBC);
-		ReleaseSemaphore(*data->emptyBC, 1, NULL);	
+		if (ReleaseSemaphore(*data->emptyBC, 1, NULL) == 0)
+			return -8;
 
-
+	
 	}
 
 	
@@ -591,7 +581,7 @@ RECORD *remove(LIST * ptr)
 	RECORD			*val;
 
 
-	if (ptr->write == ptr->read) return NULL;
+	if (ptr->read == ptr->write) return NULL;
 
 	val = &ptr->buffer[ptr->read];
 	ptr->read = (ptr->read+1)%ptr->size;
