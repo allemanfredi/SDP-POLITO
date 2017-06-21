@@ -10,8 +10,8 @@
 #endif // !_UNICODE
 
 
-#define		  BUFFER					500
-#define		  CREATE_NOT_SUSPEND		0
+#define		BUFFER					500
+#define		CREATE_NOT_SUSPEND		0
 #define     START_LIST_SIZE			5
 
 
@@ -40,25 +40,25 @@ typedef struct _LIST {
 typedef struct _DATA_TO_START {
 
 	LPTSTR		filename;
-	LIST		  *startQueue;
+	LIST		*startQueue;
 
 
 }DATA_TO_START;
 
 typedef struct _DATA_FOR_CHECK_SEX {
 
-	LIST				        *votersQueue;
+	LIST				*votersQueue;
 	
-	PHANDLE				      fullMale;
-	PHANDLE				      emptyMale;
-	PCRITICAL_SECTION	  csMale;
+	PHANDLE				fullMale;
+	PHANDLE				emptyMale;
+	PCRITICAL_SECTION	csMale;
 
-	PHANDLE				      fullFemale;
-	PHANDLE				      emptyFemale;
-	PCRITICAL_SECTION	  csFemale;
+	PHANDLE				fullFemale;
+	PHANDLE				emptyFemale;
+	PCRITICAL_SECTION	csFemale;
 
-	RECORD				      *maleStation;
-	RECORD				      *femaleStation;
+	RECORD				*maleStation;
+	RECORD				*femaleStation;
 
 
 }DATA_FOR_CHECK_SEX;
@@ -66,35 +66,35 @@ typedef struct _DATA_FOR_CHECK_SEX {
 
 typedef struct _DATA_FOR_MALE {
 
-	LIST				        *votersQueue;
-	PHANDLE				      fullMale;
-	PHANDLE				       emptyMale;
-	PCRITICAL_SECTION	  csMale;
-	RECORD				      *maleStation;
-	LIST				        *votersQueueM;
-	PHANDLE				      fullQueueM;
-	PHANDLE				      emptyQueueM;
+	LIST				*votersQueue;
+	PHANDLE				fullMale;
+	PHANDLE				emptyMale;
+	PCRITICAL_SECTION	csMale;
+	RECORD				*maleStation;
+	LIST				*votersQueueM;
+	PHANDLE				fullQueueM;
+	PHANDLE				emptyQueueM;
 	LPCRITICAL_SECTION  csQueueM;
-	PDWORD			        hashFreeStation;
-	PCRITICAL_SECTION	  csHashFreeStation;
-	DWORD				        n;
+	PDWORD			    hashFreeStation;
+	PCRITICAL_SECTION	csHashFreeStation;
+	DWORD				n;
 
 }DATA_FOR_MALE;
 
 typedef struct _DATA_FOR_FEMALE {
 
-	LIST				        *votersQueue;
-	PHANDLE				      fullFemale;
-	PHANDLE				      emptyFemale;
-	PCRITICAL_SECTION   csFemale;
-	RECORD				      *femaleStation;  //used to store the voting person
-	LIST				        *votersQueueM;
-	PHANDLE				      fullQueueM;
-	PHANDLE				      emptyQueueM;
+	LIST				*votersQueue;
+	PHANDLE				fullFemale;
+	PHANDLE				emptyFemale;
+	PCRITICAL_SECTION	csFemale;
+	RECORD				*femaleStation;  //used to store the voting person
+	LIST				*votersQueueM;
+	PHANDLE				fullQueueM;
+	PHANDLE				emptyQueueM;
 	LPCRITICAL_SECTION  csQueueM;
-	PDWORD			        hashFreeStation;
-	PCRITICAL_SECTION	  csHashFreeStation;
-	DWORD				        n;
+	PDWORD			    hashFreeStation;
+	PCRITICAL_SECTION	csHashFreeStation;
+	DWORD				n;
 
 }DATA_FOR_FEMALE;
 
@@ -102,14 +102,14 @@ typedef struct _DATA_FOR_FEMALE {
 typedef struct  _DATA_FOR_STATION {
 
 
-	LIST				          *votersQueueM;
-	PHANDLE				        fullQueueM;
-	PHANDLE				        emptyQueueM;
-	LPCRITICAL_SECTION    csQueueM;
-	PDWORD			          hashFreeStation;
-	DWORD				          n;
-	DWORD				          indexInhashFreeStation;
-	PCRITICAL_SECTION	    csHashFreeStation;
+	LIST				*votersQueueM;
+	PHANDLE				fullQueueM;
+	PHANDLE				emptyQueueM;
+	LPCRITICAL_SECTION  csQueueM;
+	PDWORD			    hashFreeStation;
+	DWORD				n;
+	DWORD				indexInhashFreeStation;
+	PCRITICAL_SECTION	csHashFreeStation;
 
 
 }DATA_FOR_STATION;
@@ -138,34 +138,34 @@ DWORD WINAPI checkSex(VOID *param);
 
 INT _tmain(INT argc, LPTSTR argv[])
 {
-	DWORD						      n, m;
-	LPTSTR						    iFile, oFile;
-	HANDLE						    hMale ,hFemale, hCheckSex;;
-	PHANDLE						    hStation;
-  DWORD						      idMale, idFemale , idCheckSex;
-	PDWORD						    idStation;
+	DWORD						n, m;
+	LPTSTR						iFile, oFile;
+	HANDLE						hMale ,hFemale, hCheckSex;;
+	PHANDLE						hStation;
+	DWORD						idMale, idFemale , idCheckSex;
+	PDWORD						idStation;
 
-	HANDLE						    fullMale , fullFemale;
-	HANDLE						    emptyMale, emptyFemale;
+	HANDLE						fullMale , fullFemale;
+	HANDLE						emptyMale, emptyFemale;
 	CRITICAL_SECTION			csMale , csFemale;
 
-	LIST						      votersQueue1, votersQueue2;
+	LIST						votersQueue1, votersQueue2;
 
 
-	DATA_FOR_CHECK_SEX		dataCheck;
-	DATA_FOR_MALE				  dataMale;
+	DATA_FOR_CHECK_SEX			dataCheck;
+	DATA_FOR_MALE				dataMale;
 	DATA_FOR_FEMALE				dataFemale;
-	DATA_TO_START				  dataStart;
+	DATA_TO_START				dataStart;
 	DATA_FOR_STATION			*dataStation;
 
-	RECORD						    maleStation;
-	RECORD					  	  femaleStation;
+	RECORD						maleStation;
+	RECORD						femaleStation;
 
-	PHANDLE						    fullQueueM;
-	PHANDLE						    emptyQueueM;
+	PHANDLE						fullQueueM;
+	PHANDLE						emptyQueueM;
 	PCRITICAL_SECTION			csQueueM;
 
-	PDWORD						    hashFreeStation; //used to keep in mind which stattion are avaiable and which not
+	PDWORD						hashFreeStation; //used to keep in mind which stattion are avaiable and which not
 
 	CRITICAL_SECTION			csHashFreeStation;
 
@@ -363,7 +363,7 @@ DWORD WINAPI checkSex(VOID *param) {
 
 
 	DATA_FOR_CHECK_SEX				*data;
-	RECORD							      *record = NULL;
+	RECORD							*record = NULL;
 
 	data = (DATA_FOR_CHECK_SEX *)param;
 
@@ -402,9 +402,14 @@ DWORD WINAPI checkSex(VOID *param) {
 				fprintf(stderr, "Error 4: %d\n", GetLastError());
 				return -5;
 			}
-		}		
+
+
+		}
+
+		
 	}
-  return 0;
+
+
 }
 
 
@@ -471,9 +476,11 @@ DWORD WINAPI male(VOID *param) {
 			fprintf(stderr, "Error 7: %d\n", GetLastError());
 			return -7;
 		}
+
 	}
 
-  return 0;
+	
+
 }
 
 
@@ -553,7 +560,7 @@ DWORD WINAPI female(VOID *param) {
 DWORD WINAPI station(VOID *param) {
 
 	DATA_FOR_STATION				*data;
-	RECORD							    *app;
+	RECORD							*app;
 
 
 	data = (DATA_FOR_STATION *)param;
