@@ -16,7 +16,6 @@ typedef struct _threadDataA{
 	sem_t			*sa;
 	sem_t			*sb;
 	
-	
 
 }threadDataA;
 
