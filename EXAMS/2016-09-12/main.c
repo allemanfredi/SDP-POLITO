@@ -80,10 +80,8 @@ int main ( int argc , char *argv[] ){
 	data1[0].time 	= rand() %5; //0-4 seconds
 	data1[0].na   	= na;
 	data1[0].cl   	= cl;
-	data1[0].mna    = mna;
-	data1[0].mcl    = mcl;
 	data1[0].print_cl    = printcl;
-	data1[0].print_na  = printna;
+	data1[0].print_na    = printna;
 
 
 	data1[1].id 	= 1;
@@ -91,11 +89,8 @@ int main ( int argc , char *argv[] ){
 	data1[1].time 	= rand() %5; //0-4 seconds
 	data1[1].na   	= na;
 	data1[1].cl   	= cl;
-	data1[1].mna    = mna;
-	data1[1].mcl    = mcl;
-	data1[0].print_cl    = printcl;
-	data1[0].print_na  = printna;
-
+	data1[1].print_cl    = printcl;
+	data1[1].print_na    = printna;
 
 
 
@@ -183,9 +178,6 @@ void *atomsOfSodium ( void *param ){
 		atomsData[i].time 	= 0; //not needed
 		atomsData[i].na   	= data->na;
 		atomsData[i].cl   	= data->cl;
-
-		atomsData[i].mna    	= data->mna;
-		atomsData[i].mcl    	= data->mcl;
 		atomsData[i].print_na  = printna;
 		atomsData[i].print_cl  = printcl;
 		
@@ -222,8 +214,6 @@ void *atomsOfClhorine ( void *param ){
 		atomsData[i].time 	= 0; //not needed
 		atomsData[i].na   	= data->na;
 		atomsData[i].cl   	= data->cl;
-		atomsData[i].mna    	= data->mna;
-		atomsData[i].mcl    	= data->mcl;
 		atomsData[i].print_na  = printna;
 		atomsData[i].print_cl  = printcl;
 		
