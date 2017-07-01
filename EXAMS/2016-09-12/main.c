@@ -1,7 +1,5 @@
 
 
-
-
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,8 +19,6 @@ typedef struct _threadData{
 	sem_t   	*cl;
 	sem_t		*print_na;
 	sem_t		*print_cl;
-	
-	
 	
 
 }threadData;
