@@ -32,9 +32,6 @@ threadData		data1[2] ;
 sem_t	*na , *cl , *printna , *printcl;
 
 int	c_na , c_cl;
-int     print_na , print_cl;
-
-
 
 
 void *atomsOfSodium ( void *param );
