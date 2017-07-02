@@ -90,7 +90,6 @@ int main ( int argc , char *argv[] ){
 	for ( int i = 0; i < n; i++ ){
 		pthread_join ( thA[i] , NULL );
 		pthread_join ( thB[i] , NULL );
-
 	}
 	
 
