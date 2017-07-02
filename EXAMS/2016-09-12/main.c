@@ -91,7 +91,7 @@ int main ( int argc , char *argv[] ){
 	pthread_create ( &t2 , NULL , atomsOfClhorine , &data1[1] );
 
 	pthread_join( t1 , NULL );
-	
+	pthread_join( t2 , NULL );
 	
 
 	return 0;
@@ -179,6 +179,9 @@ void *atomsOfSodium ( void *param ){
 
 		sleep(data->time);
 	}
+	
+	for ( int i = 0; i < data->k; i++)	
+		pthread_join( thSodium[i] , NULL );
 
 }
 
@@ -215,6 +218,9 @@ void *atomsOfClhorine ( void *param ){
 
 		sleep(data->time);
 	}
+	
+	for ( int i = 0; i < data->k; i++)	
+		pthread_join( thClhorine[i] , NULL );
 
 	
 	
