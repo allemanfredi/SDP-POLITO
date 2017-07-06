@@ -50,7 +50,8 @@ int main ( int agrc , char *argv[] ){
 		sem_init ( &s_station_forward[i]  , 0 , 1 );
 		sem_init ( &s_station_backward[i] , 0 , 1 );
 		sem_init ( &s_station_change[i]   , 0 , 1 );
-				
+		
+		
 	}
 
 	for ( int i = 0; i < nThreads; i++ ){
@@ -58,8 +59,8 @@ int main ( int agrc , char *argv[] ){
 		data[i].nStations 	   = nStations;
 		data[i].nThreads  	   = nThreads;
 		data[i].direction 	   = rand()%2; //[0,1]
-		data[i].station 	     = rand()%nStations; 
-		data[i].id 		         = i;
+		data[i].station 	   = rand()%nStations; 
+		data[i].id 		   = i;
 
 		data[i].s_station_forward  = s_station_forward;
 		data[i].s_station_backward = s_station_backward;
@@ -157,9 +158,8 @@ void *work ( void *param){
 
 		fprintf ( stdout , "Train n. %d arrived at station station %d\n" , data->id , data->station );
 
-	
 
 	}
- 
+
 
 }
