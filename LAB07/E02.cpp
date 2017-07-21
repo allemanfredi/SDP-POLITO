@@ -1,6 +1,3 @@
-// ConsoleApplication3.cpp : definisce il punto di ingresso dell'applicazione console.
-//
-
 #include "stdafx.h"
 #include <windows.h>
 #include <stdio.h>
