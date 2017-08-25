@@ -9,20 +9,20 @@
 #endif // !_UNICODE
 
 
-#define		BUFFER					500
+#define		BUFFER				500
 #define		CREATE_NOT_SUSPEND		0
 
 typedef struct _RECORD {
 
 	TCHAR		data[BUFFER];
-	INT			val;
+	INT		val;
 
 }RECORD;
 
 typedef struct _OUTPUT_RECORD {
 
-	INT	    val[2];
-	INT   	month;
+	INT	    	val[2];
+	INT   		month;
 
 
 }OUTPUT_RECORD;
@@ -32,15 +32,15 @@ typedef struct _THREAD_DATA {
 
 	INT					N;
 	INT					M;
-	PTCHAR				output_file_name;
+	PTCHAR					output_file_name;
 
 	INT					bank_account;
 
-	PHANDLE				sem_finish_calculating;
-	PHANDLE				sem_can_go_ahead;
-	PCRITICAL_SECTION	is_first;
+	PHANDLE					sem_finish_calculating;
+	PHANDLE					sem_can_go_ahead;
+	PCRITICAL_SECTION			is_first;
 
-	PINT				finish_reading;
+	PINT					finish_reading;
 
 }THREAD_DATA;
 
@@ -52,10 +52,10 @@ void check_output_file_correctness(PTCHAR file_name, INT N);
 INT _tmain(INT argc, LPTSTR argv[])
 {
 	INT			N, M;
-	TCHAR		output_file_name[BUFFER];
+	TCHAR			output_file_name[BUFFER];
 
-	PHANDLE		h_thread;
-	PDWORD		id_thread;
+	PHANDLE			h_thread;
+	PDWORD			id_thread;
 
 	INT			finish_reading = 0;
 
@@ -113,12 +113,12 @@ INT _tmain(INT argc, LPTSTR argv[])
 
 DWORD WINAPI th_work(LPVOID param) {
 
-	THREAD_DATA		*d = (THREAD_DATA *)param;
+	THREAD_DATA			*d = (THREAD_DATA *)param;
 	INT				current_month = 0;
-	HANDLE			file, output_file;
-	TCHAR			file_name[BUFFER];
-	RECORD			record;
-	DWORD			nIn = 0;
+	HANDLE				file, output_file;
+	TCHAR				file_name[BUFFER];
+	RECORD				record;
+	DWORD				nIn = 0;
 	INT				monthly_amount = 0;
 	INT				im_first = 0;
 	INT				loop = 0;
@@ -126,8 +126,8 @@ DWORD WINAPI th_work(LPVOID param) {
 	OVERLAPPED ov = { 0 , 0 , 0 , NULL };
 	LARGE_INTEGER month_pos, account_pos;
 
-	TCHAR			buf[BUFFER];
-	DWORD			nOut;
+	TCHAR				buf[BUFFER];
+	DWORD				nOut;
 
 
 	while (loop < d->M) {
@@ -213,9 +213,9 @@ DWORD WINAPI th_work(LPVOID param) {
 
 void check_output_file_correctness(PTCHAR file_name , INT N) {
 
-	OUTPUT_RECORD	record;
+	OUTPUT_RECORD			record;
 	INT				n;
-	DWORD			nIn;
+	DWORD				nIn;
 
 	HANDLE file = CreateFile(file_name, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
