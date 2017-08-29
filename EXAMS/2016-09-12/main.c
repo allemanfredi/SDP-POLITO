@@ -52,11 +52,7 @@ int main ( int argc , char *argv[] ){
 	na 	  = ( sem_t * ) malloc ( sizeof ( sem_t ) );	
 	cl 	  = ( sem_t * ) malloc ( sizeof ( sem_t ) );	
 	printna   = ( sem_t * ) malloc ( sizeof ( sem_t ) );
-	printcl   = ( sem_t * ) malloc ( sizeof ( sem_t ) );	
-
-	//mutexes allocation
-	mna 	  = ( pthread_mutex_t * ) malloc ( sizeof ( pthread_mutex_t ) );	
-	mcl 	  = ( pthread_mutex_t * ) malloc ( sizeof ( pthread_mutex_t ) );	
+	printcl   = ( sem_t * ) malloc ( sizeof ( sem_t ) );		
 	
 	
 	print_na = print_cl = 0;
