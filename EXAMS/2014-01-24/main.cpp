@@ -45,17 +45,17 @@ typedef struct _RECORD_SOLD_CAR {
 
 typedef struct _THREAD_DATA {
 
-	TCHAR				      input_file_name[BUFFER];
-	TCHAR				      output_file_name[BUFFER];
-	PDWORD			      offset_file_product;
-	HANDLE			      h_product_file;
-	DWORD				      N;
-	PTCHAR				    branch_name_more_sold_car;
-	PTCHAR				    date_sold_car;
+	TCHAR				input_file_name[BUFFER];
+	TCHAR				output_file_name[BUFFER];
+	PDWORD				offset_file_product;
+	HANDLE				h_product_file;
+	DWORD				N;
+	PTCHAR				branch_name_more_sold_car;
+	PTCHAR				date_sold_car;
 
 	PCRITICAL_SECTION	cs_get_offset;
 	PCRITICAL_SECTION	cs_print;
-	PCRITICAL_SECTION cs_check_parameters;
+	PCRITICAL_SECTION   cs_check_parameters;
 
 
 }THREAD_DATA;
@@ -159,29 +159,29 @@ INT _tmain(INT argc, LPTSTR argv[])
 
 DWORD WINAPI th_work(LPVOID param) {
 
-	THREAD_DATA		  *d = (THREAD_DATA *)param;
+	THREAD_DATA		*d = (THREAD_DATA *)param;
 	RECORD_PRODUCT	r;
 	RECORD_SOLD_CAR rs;
-	DWORD			      nIn = 0, nOut = 0;
+	DWORD			nIn = 0, nOut = 0;
 	LARGE_INTEGER   where_read_lgi;
-	DWORD			      where_read_dw;
+	DWORD			where_read_dw;
 	OVERLAPPED      ov = { 0 , 0 , 0 , 0 , NULL };
-	HANDLE			    h_trade_file;
-	DWORD			      tot_sold_cars = 0;
-	DWORD			      tot_amount = 0;
-	RECORD_OUTPUT	  ro;
+	HANDLE			h_trade_file;
+	DWORD			tot_sold_cars = 0;
+	DWORD			tot_amount = 0;
+	RECORD_OUTPUT	ro;
 
 	HANDLE          single_output_file;
-	TCHAR			      str_name[BUFFER];
-	DWORD			      index_for_date = 0;
-	DWORD			      index_for_branch_name = 0;
-	DWORD			      get_index_data = 0;
-	DWORD			      get_index_branch_name = 0;
-	DWORD			      how_many_record = 0;
-	TCHAR			      **comparing_date, **comparing_branch_name;
-	PDWORD		      hash_comparing_table_data, hash_comparing_table_branch_name;
-	INT				      first_time = 0;
-	DWORD			      choosen_index = 0;
+	TCHAR			str_name[BUFFER];
+	DWORD			index_for_date = 0;
+	DWORD			index_for_branch_name = 0;
+	DWORD			get_index_data = 0;
+	DWORD			get_index_branch_name = 0;
+	DWORD			how_many_record = 0;
+	TCHAR			**comparing_date, **comparing_branch_name;
+	PDWORD			hash_comparing_table_data, hash_comparing_table_branch_name;
+	INT				first_time = 0;
+	DWORD			choosen_index = 0;
 
 	//open file in which thread will write only own output
 	_stprintf(str_name, _T("%dfile.bin"), GetCurrentThreadId());
@@ -221,8 +221,7 @@ DWORD WINAPI th_work(LPVOID param) {
 			return -1;
 		}
 
-		
-    //open trade file whose name is defined within of the record just read
+		//open trade file whose name is defined within of the record just read
 		h_trade_file = CreateFile(r.file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (h_trade_file == INVALID_HANDLE_VALUE) {
 			fprintf(stderr, "error :  %d\n", GetLastError());
@@ -347,7 +346,8 @@ DWORD WINAPI th_work(LPVOID param) {
 		tot_sold_cars = 0;
 
 	}
-  
+
+
 	return 0;
 }
 
