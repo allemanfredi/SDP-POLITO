@@ -19,9 +19,9 @@
 
 #define     	ARGC_NEDEED				3
 
-#define TYPE_FILE					1
-#define TYPE_DIR					2
-#define TYPE_DOT					3
+#define 	TYPE_FILE				1
+#define 	TYPE_DIR				2
+#define 	TYPE_DOT				3
 
 typedef struct _RECORD {
 
