@@ -10,14 +10,14 @@
 
 #define		BUFFER					300
 
-#define		CREATE_NOT_SUSPEND		0
+#define		CREATE_NOT_SUSPEND			0
 
-#define     IP_SIZE					20
+#define     	IP_SIZE					20
 #define		NAME_SIZE				20
 #define		DATE_SIZE				30
-#define		DURATION_SIZE			10
+#define		DURATION_SIZE				10
 
-#define     ARGC_NEDEED				3
+#define     	ARGC_NEDEED				3
 
 #define TYPE_FILE					1
 #define TYPE_DIR					2
