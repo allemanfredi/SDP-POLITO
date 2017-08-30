@@ -12,7 +12,7 @@
 
 
 #define		BUFFER					500
-#define		CREATE_NOT_SUSPEND		0
+#define		CREATE_NOT_SUSPEND			0
 	
 
 typedef struct _RECORD_OUTPUT {
@@ -53,9 +53,9 @@ typedef struct _THREAD_DATA {
 	PTCHAR				branch_name_more_sold_car;
 	PTCHAR				date_sold_car;
 
-	PCRITICAL_SECTION	cs_get_offset;
-	PCRITICAL_SECTION	cs_print;
-	PCRITICAL_SECTION   cs_check_parameters;
+	PCRITICAL_SECTION		cs_get_offset;
+	PCRITICAL_SECTION		cs_print;
+	PCRITICAL_SECTION   		cs_check_parameters;
 
 
 }THREAD_DATA;
@@ -163,15 +163,15 @@ DWORD WINAPI th_work(LPVOID param) {
 	RECORD_PRODUCT	r;
 	RECORD_SOLD_CAR rs;
 	DWORD			nIn = 0, nOut = 0;
-	LARGE_INTEGER   where_read_lgi;
+	LARGE_INTEGER  		where_read_lgi;
 	DWORD			where_read_dw;
-	OVERLAPPED      ov = { 0 , 0 , 0 , 0 , NULL };
+	OVERLAPPED      	ov = { 0 , 0 , 0 , 0 , NULL };
 	HANDLE			h_trade_file;
 	DWORD			tot_sold_cars = 0;
 	DWORD			tot_amount = 0;
-	RECORD_OUTPUT	ro;
+	RECORD_OUTPUT		ro;
 
-	HANDLE          single_output_file;
+	HANDLE          	single_output_file;
 	TCHAR			str_name[BUFFER];
 	DWORD			index_for_date = 0;
 	DWORD			index_for_branch_name = 0;
@@ -180,7 +180,7 @@ DWORD WINAPI th_work(LPVOID param) {
 	DWORD			how_many_record = 0;
 	TCHAR			**comparing_date, **comparing_branch_name;
 	PDWORD			hash_comparing_table_data, hash_comparing_table_branch_name;
-	INT				first_time = 0;
+	INT			first_time = 0;
 	DWORD			choosen_index = 0;
 
 	//open file in which thread will write only own output
