@@ -13,7 +13,7 @@
 
 
 #define		BUFFER					500
-#define		CREATE_NOT_SUSPEND		0
+#define		CREATE_NOT_SUSPEND			0
 #define		TYPE_FILE				1
 #define		TYPE_DIR				2
 #define		TYPE_DOT				3
@@ -21,27 +21,27 @@
 
 typedef struct _THREAD_DATA {
 
-	TCHAR					source[BUFFER];
-	TCHAR					destination[BUFFER];
+	TCHAR						source[BUFFER];
+	TCHAR						destination[BUFFER];
 
-	PTCHAR					name_for_merge;
+	PTCHAR						name_for_merge;
 
-	LPCRITICAL_SECTION		cs_check_file_presence;
-	LPCRITICAL_SECTION		cs_set_file_name_for_merge;
-	PHANDLE					sem_finish;
-	PHANDLE					sem_go_ahead;
+	LPCRITICAL_SECTION				cs_check_file_presence;
+	LPCRITICAL_SECTION				cs_set_file_name_for_merge;
+	PHANDLE						sem_finish;
+	PHANDLE						sem_go_ahead;
 
-	DWORD					which_semaphore;
+	DWORD						which_semaphore;
 
 }THREAD_DATA;
 
 typedef struct _THREAD_DATA_MERGE {
 
-	DWORD					N;
-	PTCHAR					name_for_merge;
+	DWORD						N;
+	PTCHAR						name_for_merge;
 
-	PHANDLE					sem_finish;
-	PHANDLE					sem_go_ahead;
+	PHANDLE						sem_finish;
+	PHANDLE						sem_go_ahead;
 
 }THREAD_DATA_MERGE;
 
@@ -132,7 +132,7 @@ INT _tmain(INT argc, LPTSTR argv[])
 
 DWORD WINAPI th_merge(LPVOID param) {
 
-	THREAD_DATA_MERGE	*d = (THREAD_DATA_MERGE *)param;
+	THREAD_DATA_MERGE		*d = (THREAD_DATA_MERGE *)param;
 	DWORD				res;
 	PHANDLE				app_sem_finish = (PHANDLE)malloc(d->N * sizeof(HANDLE));
 	HANDLE				file_to_open, final_file;
@@ -220,14 +220,15 @@ DWORD WINAPI th_merge(LPVOID param) {
 
 DWORD WINAPI th_work (LPVOID param)
 {
-	THREAD_DATA *d = (THREAD_DATA *)param;
+	THREAD_DATA 			*d = (THREAD_DATA *)param;
+	
 	DWORD				FType, i;
 	HANDLE				search_handle;
-	WIN32_FIND_DATA		find_data;
+	WIN32_FIND_DATA			find_data;
 	TCHAR				originalPath[BUFFER] = { 0 };
 	TCHAR				allNames[BUFFER] = { 0 };
 	THREAD_DATA			d_app;
-	BOOL			    end = TRUE;
+	BOOL			    	end = TRUE;
 	TCHAR				str_name[BUFFER];
 	TCHAR				buffer[BUFFER];
 	TCHAR				ch;
@@ -401,7 +402,7 @@ BOOL DirectoryExists(LPCTSTR szPath){
 }
 
 
-INT	get_number_of_word(PTCHAR line) {
+INT get_number_of_word(PTCHAR line) {
 
 	INT			number_of_character = _tcslen(line);
 	BOOL		is_word = FALSE;
