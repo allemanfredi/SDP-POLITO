@@ -24,10 +24,9 @@ typedef struct  _LIST_SEM{
 
 typedef struct	_PRIORITY_SEMAPHORE{
 
-	int		cnt;
-	LIST_SEM	*sem_list;
-	sem_t		*mutex;
-
+	int			cnt;
+	LIST_SEM		*sem_list;
+	sem_t			*mutex;
 
 }PRIORITY_SEMAPHORE;
 
@@ -41,8 +40,6 @@ typedef struct _THREAD_DATA{
 
 	int			*ppipe;
 	
-
-
 }THREAD_DATA;
 
 
@@ -125,7 +122,6 @@ int main ( int argc , char *argv[] ){
 
 	for ( int i = 0; i < K; i++ )
 		pthread_join ( th[i] , NULL );
-
 
 	return 0;
 }
