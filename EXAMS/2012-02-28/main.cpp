@@ -10,7 +10,7 @@
 
 
 #define		BUFFER					500
-#define		CREATE_NOT_SUSPEND		0
+#define		CREATE_NOT_SUSPEND			0
 #define		SIZE_QUEUE				10
 
 typedef struct _RECORD {
@@ -25,30 +25,30 @@ typedef struct _RECORD {
 
 typedef struct _QUEUE {
 	
-	RECORD		    *buffer;
-	INT				size;
-	INT				read;
-	INT				write;
+	RECORD			*buffer;
+	INT		  	size;
+	INT		   	read;
+	INT		   	write;
 
-	INT				max_predicted_time;
-	INT				min_predicted_time;
+	INT		   	max_predicted_time;
+	INT		   	min_predicted_time;
 
 }QUEUE;
 
 typedef struct _DATA_CLIENT {
 
-	INT					M;
-	INT					Q;
-	INT					N;
+	INT		   	M;
+	INT			Q;
+	INT			N;
 
-	INT					C;
+	INT			C;
 
-	QUEUE				*queues;
+	QUEUE			*queues;
 
-	TCHAR				file_name[BUFFER];
+	TCHAR			file_name[BUFFER];
 
-	PHANDLE				full;
-	PHANDLE				empty;
+	PHANDLE			full;
+	PHANDLE			empty;
 	LPCRITICAL_SECTION	cs_client;
 
 }DATA_CLIENT;
@@ -56,14 +56,14 @@ typedef struct _DATA_CLIENT {
 
 typedef struct _DATA_SERVER {
 
-	INT					M;
-	INT					Q;
-	INT					N;
+	INT			M;
+	INT			Q;
+	INT			N;
 
-	QUEUE				*queues;
+	QUEUE			*queues;
 
-	PHANDLE				full;
-	PHANDLE				empty;
+	PHANDLE			full;
+	PHANDLE			empty;
 	LPCRITICAL_SECTION	cs_server;
 
 }DATA_SERVER;
@@ -84,10 +84,10 @@ DWORD WINAPI server_work(LPVOID param);
 
 INT _tmain(INT argc, LPTSTR argv[]){
 
-	TCHAR		file_name[BUFFER];
+	TCHAR			file_name[BUFFER];
 	INT			M, N, Q;
-	DWORD		n_in;
-	HANDLE		h_in_file;
+	DWORD			n_in;
+	HANDLE			h_in_file;
 
 
 	//get input parameter
@@ -165,7 +165,7 @@ INT _tmain(INT argc, LPTSTR argv[]){
 		d_server[i].full		= full;
 		d_server[i].empty		= empty;
 		d_server[i].queues		= queues;
-		d_server[i].cs_server	= cs_server;
+		d_server[i].cs_server		= cs_server;
 		d_server[i].M			= M;
 		d_server[i].N			= N;
 		d_server[i].Q			= Q;
@@ -183,7 +183,7 @@ INT _tmain(INT argc, LPTSTR argv[]){
 		d_client[i].empty		= empty;
 		d_client[i].C			= i;
 		d_client[i].queues		= queues;
-		d_client[i].cs_client	= cs_client;
+		d_client[i].cs_client		= cs_client;
 		d_client[i].M			= M;
 		d_client[i].N			= N;
 		d_client[i].Q			= Q;
@@ -227,8 +227,8 @@ DWORD WINAPI client_work(LPVOID param) {
 	HANDLE				h_in_file;
 	DWORD				nIn, nOut;
 	OVERLAPPED			overlapped = { 0, 0, 0, 0, NULL };
-	LARGE_INTEGER		file_pos;
-	LARGE_INTEGER		file_reserved;
+	LARGE_INTEGER			file_pos;
+	LARGE_INTEGER			file_reserved;
 	RECORD				r;
 	BOOL				first_time = FALSE;
 
@@ -300,7 +300,7 @@ DWORD WINAPI client_work(LPVOID param) {
 //server
 DWORD WINAPI server_work(LPVOID param) {
 
-	DATA_SERVER *d = (DATA_SERVER *)param;
+	DATA_SERVER 	*d = (DATA_SERVER *)param;
 	RECORD		r;
 	DWORD		res = 0;
 
