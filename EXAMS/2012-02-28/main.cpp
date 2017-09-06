@@ -16,8 +16,8 @@
 typedef struct _RECORD {
 
 	TCHAR			name[40];
-	INT				C;
-	INT				id;
+	INT			C;
+	INT			id;
 	FLOAT			predicted_duration;
 
 }RECORD;
