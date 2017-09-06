@@ -23,6 +23,7 @@ typedef struct _RECORD {
 }RECORD;
 
 
+
 typedef struct _QUEUE {
 	
 	RECORD			*buffer;
@@ -34,6 +35,8 @@ typedef struct _QUEUE {
 	INT		   	min_predicted_time;
 
 }QUEUE;
+
+
 
 typedef struct _DATA_CLIENT {
 
@@ -52,6 +55,7 @@ typedef struct _DATA_CLIENT {
 	LPCRITICAL_SECTION	cs_client;
 
 }DATA_CLIENT;
+
 
 
 typedef struct _DATA_SERVER {
