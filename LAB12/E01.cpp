@@ -9,7 +9,7 @@
 #endif // !_UNICODE
 
 
-#define		BUFFER					500
+#define		BUFFER				500
 #define		CREATE_NOT_SUSPEND		0
 
 
