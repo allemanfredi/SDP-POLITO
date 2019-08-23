@@ -11,27 +11,19 @@
 
 
 typedef struct _DATA{
-
 	int nStations;
 	int nThreads;
-
 	int direction;
 	int station;
-
 	int id;
-
 	sem_t *s_station_forward;
 	sem_t *s_station_backward;
 	sem_t *s_station_change;
-
-
-
-}DATA;
+} DATA;
 
 
 void *work ( void *param);
 int main ( int agrc , char *argv[] ){
-
 	srand ( time ( NULL ) );
 
 	int nStations = atoi ( argv[1] );
@@ -50,12 +42,9 @@ int main ( int agrc , char *argv[] ){
 		sem_init ( &s_station_forward[i]  , 0 , 1 );
 		sem_init ( &s_station_backward[i] , 0 , 1 );
 		sem_init ( &s_station_change[i]   , 0 , 1 );
-		
-		
 	}
 
 	for ( int i = 0; i < nThreads; i++ ){
-		
 		data[i].nStations 	   = nStations;
 		data[i].nThreads  	   = nThreads;
 		data[i].direction 	   = rand()%2; //[0,1]
@@ -67,8 +56,6 @@ int main ( int agrc , char *argv[] ){
 		data[i].s_station_change   = s_station_change;
 
 		pthread_create ( &th[i] , NULL , work , &data[i] );
-	
-
 	}
 
 	for ( int i = 0; i < nThreads; i++)
@@ -79,15 +66,11 @@ int main ( int agrc , char *argv[] ){
 
 
 void *work ( void *param){
-
-
 	DATA *data = ( DATA * ) param;
 
 	int nextStation;
 
-
 	while ( 1 ){
-
 		if ( data->direction == 0 )// forward ( clockwise )
 			sem_wait ( &data->s_station_forward[data->station] );
 
@@ -115,25 +98,19 @@ void *work ( void *param){
 		//wait a free rail
 		sem_wait ( &data->s_station_change[app] );
 
-
 		if ( data->direction == 0 )// forward ( clockwise )
 			sem_post ( &data->s_station_forward[data->station] );
 
 		else if ( data->direction == 1 )// bacward ( countclockwise )
 			sem_post ( &data->s_station_backward[data->station] );
 
-
-		
 		if ( data->direction == 0 )
 			fprintf ( stdout , "Train n. %d travelling toward station %d\n" , data->id , app++ );
 		else if ( data->direction == 1 )
 			fprintf ( stdout , "Train n. %d travelling toward station %d\n" , data->id , app-- );
 
-		
-	
 		sleep(10);
 
-		
 		//calculating new data->station value
 		if ( data->direction == 0 ){	
 			data->station++;
@@ -157,9 +134,5 @@ void *work ( void *param){
 		}
 
 		fprintf ( stdout , "Train n. %d arrived at station station %d\n" , data->id , data->station );
-
-
 	}
-
-
 }
